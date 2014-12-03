@@ -23,10 +23,14 @@ def pad_num_str(s, N, n):
 def scatterplot(data, key1i, key2i, key3o):
     dataX = []
     dataY = []
+    dataZ = []
     for d in data:
         dataX.append(float(d[key1i]))
         dataY.append(float(d[key2i]))
-    plt.plot(dataX, dataY)
+        dataZ.append(True if str(d[key3o]) == "True" else False)
+    for i in range(len(dataX)):
+        plt.plot(dataX[i], dataY[i], "." + ("g" if dataZ[i] else "r"))
+    plt.show()
 
 
 def main():
