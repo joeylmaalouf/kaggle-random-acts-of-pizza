@@ -24,8 +24,8 @@ def main():
     print("account age      up - down    recieved pizza?")
     for d in train:
         print(relevant_data_string(d))
-    #     for k in d:
-    #         print(unistring(k), ":", unistring(d[k]), "\n")
+    #   for k in d:
+    #       print(unistring(k), ":", unistring(d[k]), "\n")
 
 
 if __name__ == "__main__":
