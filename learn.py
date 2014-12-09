@@ -5,15 +5,24 @@ import seaborn as sns
 import sys
 
 
-def get_data(data_object, key1, renamed1, key2, renamed2, key3, renamed3):
+def get_data(data_object, key1, renamed1, key2, renamed2,
+             key3, renamed3, key4, renamed4, key5, renamed5):
     val1 = []
     val2 = []
     val3 = []
+    val4 = []
+    val5 = []
     for d in data_object:
         val1.append(float(d[key1]))
         val2.append(float(d[key2]))
         val3.append(str(d[key3]) == "True")
-    return {renamed1: val1, renamed2: val2, renamed3: val3}
+        val4.append(d[key4].lower())
+        val5.append(d[key5].lower())
+    return {renamed1: val1,
+            renamed2: val2,
+            renamed3: val3,
+            renamed4: val4,
+            renamed5: val5}
 
 
 def scatterplot(data_dict):
@@ -44,12 +53,12 @@ def pad_num_str(s, N, n):
     return ("%0"+str(N)+"."+str(n)+"f") % float(s)
 
 
-def will_reciprocate(d):
-    title = d["request_title"].lower()
-    text = d["request_text_edit_aware"].lower()
+def will_reciprocate(data_dict, index):
+    title = data_dict["title"][index]
+    body = data_dict["body"][index]
     phrases = ["pay it forward", "return the favor", "reciprocate"]
     for p in phrases:
-        if p in title or p in text:
+        if p in title or p in body:
             return True
     return False
 
@@ -64,8 +73,12 @@ def main(argv):
                          "requester_upvotes_minus_downvotes_at_request",
                          "karma",
                          "requester_received_pizza",
-                         "result")
-    # print_data(data_dict)
+                         "result",
+                         "request_title",
+                         "title",
+                         "request_text_edit_aware",
+                         "body")
+    print_data(data_dict)
     scatterplot(data_dict)
 
 if __name__ == "__main__":
