@@ -15,10 +15,6 @@ def unistring(s):
 
 def process_data(data_json, key1, renamed1, key2, renamed2, key3, renamed3,
                  key4, renamed4, key5, renamed5, key6, renamed6):
-    #Takes in the list of dictionoaries (data_json), and converts it into a
-    #dictionary of lists: all of the dictionaries store data under the same
-    #keys. key6 should be whether or not pizza was recieved.
-    #The keys are also renamed in favor of readability.
     val1 = []
     val2 = []
     val3 = []
@@ -31,7 +27,7 @@ def process_data(data_json, key1, renamed1, key2, renamed2, key3, renamed3,
         val3.append(int(d[key3]))
         val4.append(d[key4].lower())
         val5.append(d[key5].lower())
-        val6.append(str(d[key6]) == "True") #string saying true of false to bool
+        val6.append(str(d[key6]) == "True")
     return {renamed1: val1,
             renamed2: val2,
             renamed3: val3,
@@ -46,19 +42,10 @@ def get_best_fit_poly(data_dict, x, y, deg):
 
 
 def scatterplot(data_dict):
-    for i in range(len(data_dict["age"])): #Actually identifies the number of 
-                                            #posts used as data points
-        formatting = "." + ("g" if data_dict["result"][i] else "r") #Green if
-                                                    #pizza recieved, red if not.
+    for i in range(len(data_dict["age"])):
+        formatting = "." + ("g" if data_dict["result"][i] else "r")
         plt.plot(data_dict["age"][i], data_dict["karma"][i], formatting)
-<<<<<<< HEAD
-    
-    #Calculates and graphs the line of best fit
-    coeffs = np.polyfit(x=data_dict["age"], y=data_dict["karma"], deg=1)
-    poly = np.poly1d(coeffs)
-=======
     poly = get_best_fit_poly(data_dict, "age", "karma", 1)
->>>>>>> origin/master
     plt.plot(data_dict["age"], poly(data_dict["age"]))
     plt.show()
 
@@ -106,8 +93,10 @@ def main(argv):
                              "body",
                              "requester_received_pizza",
                              "result")
-    print_data(data_dict)
-    scatterplot(data_dict)
+    # print_data(data_dict)
+    # scatterplot(data_dict)
+    poly = get_best_fit_poly(data_dict, "age", "karma", 1)
+
 
 if __name__ == "__main__":
     main(sys.argv)
