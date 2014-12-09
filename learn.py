@@ -1,7 +1,8 @@
 import json
 import matplotlib.pyplot as plt
 # import numpy as np
-# import seaborn as sns
+import seaborn as sns
+import sys
 
 
 def unistring(s):
@@ -20,6 +21,16 @@ def pad_num_str(s, N, n):
     return ("%0"+str(N)+"."+str(n)+"f") % float(s)
 
 
+def will_reciprocate(d):
+    title = d["request_title"].lower()
+    text = d["request_text_edit_aware"].lower()
+    phrases = ["pay it forward", "return the favor", "reciprocate"]
+    for p in phrases:
+        if p in title or p in text:
+            return True
+    return False
+
+
 def scatterplot(data, key1i, key2i, key3o):
     dataX = []
     dataY = []
@@ -33,7 +44,7 @@ def scatterplot(data, key1i, key2i, key3o):
     plt.show()
 
 
-def main():
+def main(argv):
     # import JSON data as a list of dicts, each of which is a data point
     with open("train.json") as open_file:
         train = json.loads(unistring(open_file.read()))
@@ -48,4 +59,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv)
