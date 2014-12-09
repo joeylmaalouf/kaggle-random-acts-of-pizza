@@ -66,13 +66,13 @@ def will_reciprocate(data_dict, index):
 
 def print_data(data_dict):
     print("id, age, karma, reciprocal, result")
-    for i in range(len(data_dict["age"])):
+    for i in range(len(data_dict["id"])):
         print(
             data_dict["id"][i],
             data_dict["age"][i],
             data_dict["karma"][i],
             will_reciprocate(data_dict, i),
-            str(data_dict["result"][i])
+            data_dict["result"][i]
         )
 
 
@@ -96,6 +96,13 @@ def main(argv):
     # print_data(data_dict)
     # scatterplot(data_dict)
     poly = get_best_fit_poly(data_dict, "age", "karma", 1)
+    predictions = [(poly(data_dict["age"][i]) < data_dict["karma"][i])
+                   or will_reciprocate(data_dict, i)
+                   for i in range(len(data_dict["id"]))]
+    with open("predictions.csv", "w") as output:
+        output.write("request_id,requester_received_pizza\n")
+        for i in range(len(data_dict["id"])):
+            output.write("%s,%d\n" % (data_dict["id"][i], predictions[i]))
 
 
 if __name__ == "__main__":
