@@ -6,9 +6,10 @@ import sys
 
 
 def unistring(s):
-    #Removes all non-ascii characters
-    #Reddit is filled with emoji's and strange unicode characters that break 
-    #our string parsing
+    """Encodes our Unicode string to ASCII, then back to Unicode.
+    In the translation, we ignore all unknown characters, which removes
+    all of the non-ASCII characters that break our string parsing.
+    """
     return str(s).encode("ascii", "ignore").decode()
 
 
@@ -46,9 +47,10 @@ def scatterplot(data_dict):
 
 
 def will_reciprocate(data_dict, index):
-    #Searches the text of the request for phrases that suggest a promise to
-    #give pizza to someone else. data_dict is a dictionary containing the data
-    #for a single post.
+    """Searches the text of the request for phrases that suggest a promise to
+    give pizza to someone else. data_dict is a dictionary of lists,and any given
+    index in the lists corresponds to the same post for different keys.
+    """
     title = data_dict["title"][index]
     body = data_dict["body"][index]
     phrases = ["pay it forward", "return the favor", "reciprocate"]
