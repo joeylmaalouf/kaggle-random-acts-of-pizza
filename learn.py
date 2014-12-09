@@ -5,24 +5,31 @@ import seaborn as sns
 import sys
 
 
-def get_data(data_object, key1, renamed1, key2, renamed2,
-             key3, renamed3, key4, renamed4, key5, renamed5):
+def unistring(s):
+    return str(s).encode("ascii", "ignore").decode()
+
+
+def process_data(data_json, key1, renamed1, key2, renamed2, key3, renamed3,
+                 key4, renamed4, key5, renamed5, key6, renamed6):
     val1 = []
     val2 = []
     val3 = []
     val4 = []
     val5 = []
-    for d in data_object:
-        val1.append(float(d[key1]))
+    val6 = []
+    for d in data_json:
+        val1.append(d[key1])
         val2.append(float(d[key2]))
-        val3.append(str(d[key3]) == "True")
+        val3.append(int(d[key3]))
         val4.append(d[key4].lower())
         val5.append(d[key5].lower())
+        val6.append(str(d[key6]) == "True")
     return {renamed1: val1,
             renamed2: val2,
             renamed3: val3,
             renamed4: val4,
-            renamed5: val5}
+            renamed5: val5,
+            renamed6: val6}
 
 
 def scatterplot(data_dict):
@@ -35,24 +42,6 @@ def scatterplot(data_dict):
     plt.show()
 
 
-def print_data(data_dict):
-    print("age, karma, result")
-    for i in range(len(data_dict["age"])):
-        print(
-            pad_num_str(data_dict["age"][i], 12, 6),
-            pad_num_str(data_dict["karma"][i], 6, 0),
-            str(data_dict["result"][i])
-        )
-
-
-def unistring(s):
-    return str(s).encode("ascii", "ignore").decode()
-
-
-def pad_num_str(s, N, n):
-    return ("%0"+str(N)+"."+str(n)+"f") % float(s)
-
-
 def will_reciprocate(data_dict, index):
     title = data_dict["title"][index]
     body = data_dict["body"][index]
@@ -63,21 +52,35 @@ def will_reciprocate(data_dict, index):
     return False
 
 
+def print_data(data_dict):
+    print("id, age, karma, reciprocal, result")
+    for i in range(len(data_dict["age"])):
+        print(
+            data_dict["id"][i],
+            data_dict["age"][i],
+            data_dict["karma"][i],
+            will_reciprocate(data_dict, i),
+            str(data_dict["result"][i])
+        )
+
+
 def main(argv):
     # import JSON data as a list of dicts, each of which is a data point
     with open("train.json") as open_file:
         train = json.loads(unistring(open_file.read()))
-    data_dict = get_data(train,
-                         "requester_account_age_in_days_at_request",
-                         "age",
-                         "requester_upvotes_minus_downvotes_at_request",
-                         "karma",
-                         "requester_received_pizza",
-                         "result",
-                         "request_title",
-                         "title",
-                         "request_text_edit_aware",
-                         "body")
+    data_dict = process_data(train,
+                             "request_id",
+                             "id",
+                             "requester_account_age_in_days_at_request",
+                             "age",
+                             "requester_upvotes_minus_downvotes_at_request",
+                             "karma",
+                             "request_title",
+                             "title",
+                             "request_text_edit_aware",
+                             "body",
+                             "requester_received_pizza",
+                             "result")
     print_data(data_dict)
     scatterplot(data_dict)
 
