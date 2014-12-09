@@ -1,6 +1,6 @@
 import json
 import matplotlib.pyplot as plt
-# import numpy as np
+import numpy as np
 import seaborn as sns
 import sys
 
@@ -31,16 +31,24 @@ def will_reciprocate(d):
     return False
 
 
-def scatterplot(data, key1i, key2i, key3o):
+def get_data(data_object, key1x, key2y, key3z):
     dataX = []
     dataY = []
     dataZ = []
-    for d in data:
-        dataX.append(float(d[key1i]))
-        dataY.append(float(d[key2i]))
-        dataZ.append(True if str(d[key3o]) == "True" else False)
-    for i in range(len(dataX)):
-        plt.plot(dataX[i], dataY[i], "." + ("g" if dataZ[i] else "r"))
+    for d in data_object:
+        dataX.append(float(d[key1x]))
+        dataY.append(float(d[key2y]))
+        dataZ.append(str(d[key3z]) == "True")
+    return {"x": dataX, "y": dataY, "z": dataZ}
+
+
+def scatterplot(data):
+    for i in range(len(data["x"])):
+        formatting = "." + ("g" if data["z"][i] else "r")
+        plt.plot(data["x"][i], data["y"][i], formatting)
+    coeffs = np.polyfit(x=data["x"], y=data["y"], deg=1)
+    poly = np.poly1d(coeffs)
+    plt.plot(data["x"], poly(data["x"]))
     plt.show()
 
 
@@ -53,10 +61,10 @@ def main(argv):
 #       print(relevant_data_string(d))
 #       for k in d:
 #           print(unistring(k), ":", unistring(d[k]), "\n")
-    scatterplot(train, "requester_account_age_in_days_at_request",
-                "requester_upvotes_minus_downvotes_at_request",
-                "requester_received_pizza")
-
+    data_dict = get_data(train, "requester_account_age_in_days_at_request",
+                         "requester_upvotes_minus_downvotes_at_request",
+                         "requester_received_pizza")
+    scatterplot(data_dict)
 
 if __name__ == "__main__":
     main(sys.argv)
