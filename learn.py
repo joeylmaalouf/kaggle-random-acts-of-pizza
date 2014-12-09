@@ -96,8 +96,23 @@ def main(argv):
     karma than the corresponding point on the best-fit line.
     """
     with open("train.json") as open_file:
-        train = json.loads(unistring(open_file.read()))
-    data_dict = process_data(train,
+        json_train = json.loads(unistring(open_file.read()))
+    data_train = process_data(json_train,
+                              "request_id",
+                              "id",
+                              "requester_account_age_in_days_at_request",
+                              "age",
+                              "requester_upvotes_minus_downvotes_at_request",
+                              "karma",
+                              "request_title",
+                              "title",
+                              "request_text_edit_aware",
+                              "body",
+                              "requester_received_pizza",
+                              "result")
+    with open("train.json") as open_file:
+        json_test = json.loads(unistring(open_file.read()))
+    data_test = process_data(json_test,
                              "request_id",
                              "id",
                              "requester_account_age_in_days_at_request",
@@ -112,14 +127,26 @@ def main(argv):
                              "result")
     # print_data(data_dict)
     # scatterplot(data_dict)
-    poly = get_best_fit_poly(data_dict, "age", "karma", 1)
-    predictions = [(poly(data_dict["age"][i]) < data_dict["karma"][i])
-                   or will_reciprocate(data_dict, i)
-                   for i in range(len(data_dict["id"]))]
+    poly = get_best_fit_poly(data_train, "age", "karma", 1)
+
+    predictions_train = [(poly(data_train["age"][i]) < data_train["karma"][i])
+                         or will_reciprocate(data_train, i)
+                         for i in range(len(data_train["id"]))]
+    correct = 0
+    for i in range(len(predictions_train)):
+        if predictions_train[i] == data_train["result"][i]:
+            correct += 1
+    accuracy = correct / len(predictions_train) * 100
+    print("Testing accuracy:", accuracy, "%")
+
+    predictions_test = [(poly(data_test["age"][i]) < data_test["karma"][i])
+                        or will_reciprocate(data_test, i)
+                        for i in range(len(data_test["id"]))]
+
     with open("predictions.csv", "w") as output:
         output.write("request_id,requester_received_pizza\n")
-        for i in range(len(data_dict["id"])):
-            output.write("%s,%d\n" % (data_dict["id"][i], predictions[i]))
+        for i in range(len(data_test["id"])):
+            output.write("%s,%d\n" % (data_test["id"][i], predictions_test[i]))
 
 
 if __name__ == "__main__":
