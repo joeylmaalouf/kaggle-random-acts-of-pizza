@@ -6,9 +6,10 @@ import sys
 
 
 def unistring(s):
-    #Removes all non-ascii characters
-    #Reddit is filled with emoji's and strange unicode characters that break 
-    #our string parsing
+    """Encodes our Unicode string to ASCII, then back to Unicode.
+    In the translation, we ignore all unknown characters, which removes
+    all of the non-ASCII characters that break our string parsing.
+    """
     return str(s).encode("ascii", "ignore").decode()
 
 
@@ -39,24 +40,34 @@ def process_data(data_json, key1, renamed1, key2, renamed2, key3, renamed3,
             renamed6: val6}
 
 
+def get_best_fit_poly(data_dict, x, y, deg):
+    coeffs = np.polyfit(x=data_dict[x], y=data_dict[y], deg=deg)
+    return np.poly1d(coeffs)
+
+
 def scatterplot(data_dict):
     for i in range(len(data_dict["age"])): #Actually identifies the number of 
                                             #posts used as data points
         formatting = "." + ("g" if data_dict["result"][i] else "r") #Green if
                                                     #pizza recieved, red if not.
         plt.plot(data_dict["age"][i], data_dict["karma"][i], formatting)
+<<<<<<< HEAD
     
     #Calculates and graphs the line of best fit
     coeffs = np.polyfit(x=data_dict["age"], y=data_dict["karma"], deg=1)
     poly = np.poly1d(coeffs)
+=======
+    poly = get_best_fit_poly(data_dict, "age", "karma", 1)
+>>>>>>> origin/master
     plt.plot(data_dict["age"], poly(data_dict["age"]))
     plt.show()
 
 
 def will_reciprocate(data_dict, index):
-    #Searches the text of the request for phrases that suggest a promise to
-    #give pizza to someone else. data_dict is a dictionary containing the data
-    #for a single post.
+    """Searches the text of the request for phrases that suggest a promise to
+    give pizza to someone else. data_dict is a dictionary of lists,and any given
+    index in the lists corresponds to the same post for different keys.
+    """
     title = data_dict["title"][index]
     body = data_dict["body"][index]
     phrases = ["pay it forward", "return the favor", "reciprocate"]
