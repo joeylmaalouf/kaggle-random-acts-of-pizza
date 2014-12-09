@@ -14,7 +14,7 @@ def unistring(s):
 
 
 def process_data(data_json, key1, renamed1, key2, renamed2, key3, renamed3,
-                 key4, renamed4, key5, renamed5, key6, renamed6):
+                 key4, renamed4, key5, renamed5, key6="", renamed6=""):
     """Converts our list of dictionaries to a dictionary of lists,
     while processing some of the data points (e.g. converting number strings
     to ints and float, as well as lowercasing strings). Also uses renamed keys
@@ -32,7 +32,8 @@ def process_data(data_json, key1, renamed1, key2, renamed2, key3, renamed3,
         val3.append(int(d[key3]))
         val4.append(d[key4].lower())
         val5.append(d[key5].lower())
-        val6.append(str(d[key6]) == "true" or str(d[key6]) == "True")
+        if key6 is not "":
+            val6.append(str(d[key6]) == "true" or str(d[key6]) == "True")
     return {renamed1: val1,
             renamed2: val2,
             renamed3: val3,
@@ -97,6 +98,7 @@ def main(argv):
     """
     with open("train.json") as open_file:
         json_train = json.loads(unistring(open_file.read()))
+    print(len(json_train), "training data points")
     data_train = process_data(json_train,
                               "request_id",
                               "id",
@@ -110,8 +112,9 @@ def main(argv):
                               "body",
                               "requester_received_pizza",
                               "result")
-    with open("train.json") as open_file:
+    with open("test.json") as open_file:
         json_test = json.loads(unistring(open_file.read()))
+    print(len(json_test), "testing data points")
     data_test = process_data(json_test,
                              "request_id",
                              "id",
@@ -122,9 +125,7 @@ def main(argv):
                              "request_title",
                              "title",
                              "request_text_edit_aware",
-                             "body",
-                             "requester_received_pizza",
-                             "result")
+                             "body")
     # print_data(data_dict)
     # scatterplot(data_dict)
     poly = get_best_fit_poly(data_train, "age", "karma", 1)
@@ -137,7 +138,7 @@ def main(argv):
         if predictions_train[i] == data_train["result"][i]:
             correct += 1
     accuracy = correct / len(predictions_train) * 100
-    print("Testing accuracy:", accuracy, "%")
+    print("Training accuracy:", accuracy, "%")
 
     predictions_test = [(poly(data_test["age"][i]) < data_test["karma"][i])
                         or will_reciprocate(data_test, i)
