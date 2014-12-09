@@ -36,12 +36,16 @@ def process_data(data_json, key1, renamed1, key2, renamed2, key3, renamed3,
             renamed6: val6}
 
 
+def get_best_fit_poly(data_dict, x, y, deg):
+    coeffs = np.polyfit(x=data_dict[x], y=data_dict[y], deg=deg)
+    return np.poly1d(coeffs)
+
+
 def scatterplot(data_dict):
     for i in range(len(data_dict["age"])):
         formatting = "." + ("g" if data_dict["result"][i] else "r")
         plt.plot(data_dict["age"][i], data_dict["karma"][i], formatting)
-    coeffs = np.polyfit(x=data_dict["age"], y=data_dict["karma"], deg=1)
-    poly = np.poly1d(coeffs)
+    poly = get_best_fit_poly(data_dict, "age", "karma", 1)
     plt.plot(data_dict["age"], poly(data_dict["age"]))
     plt.show()
 
